@@ -9,6 +9,9 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+
+
+
 function mainMenu(){
     inquirer.prompt(
         [
@@ -16,15 +19,21 @@ function mainMenu(){
                 type: 'list',
                 name: 'toDo',
                 message:'What would you like to do?',
-                choices: ['View Employees','Add Employee','Edit Employee','View Roles','Add Role','View Departments','Add Department','Quit'],
+                choices: 
+                [
+                'View Employees','Add Employee','Edit Employee','View Roles',
+                'Add Role','View Departments','Add Department','Quit'
+                ],
                 default: 'View Employees'
             },
         ]
     )
     .then((a)=>{
+        console.log(a.toDo)
+        let selected;
         switch(a.toDo){
-            case 'View Employess':
-                view('employees');
+            case 'View Employees':
+                view('employee');
                 break;
             case 'Add Employee':
                 addEmp();
@@ -39,14 +48,13 @@ function mainMenu(){
                 addRole();
                 break;
             case 'View Departments':
-                view('departments');
+                view('department');
                 break;
             case 'Add Department':
                 addDep();
                 break;
             case 'Quit':
-                process.exit(0)
-                break;
+                process.exit(0);
         }
     })
     .catch(error=>console.log(error.message))
@@ -57,18 +65,16 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: '2002',
+        password: '1212',
         database: 'company_db'
     },
 );
 
 function view(data){
-    
-    const sql = `SELECT * FROM ?;`;
-  
-    db.query(sql, data ,(err, rows) => {
+    console.log(data)
+    db.query(`SELECT * FROM ? ;`, data ,(err, rows) => {
       if (err) {
-        res.status(500).json({ error: err.message });
+        console.error(`Error`);
          return;
     }
     console.table(rows)
@@ -89,7 +95,7 @@ function addDep(){
         const sql = `INSERT INTO department (name) VALUES (?)`;
         db.query(sql, a.nametoAdd ,(err, rows) => {
             if (err) {
-              res.status(500).json({ error: err.message });
+              console.error(`Error`);
                return;
             }
           mainMenu();
