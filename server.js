@@ -100,17 +100,16 @@ function add(data){
         },
     ])
     .then((a)=>{
+        console.log(a.nametoAdd)
         let sql;
         if(data === 'department'){
             sql = `INSERT INTO department (name) VALUES (?)`;
-            addQuery(sql,a.nametoAdd);
         }else if(data === 'role'){
-            sql = `INSERT INTO roles (title) VALUES (?)`;
-            addQuery(sql,a.nametoAdd);
+            sql = `INSERT INTO roles (department_id) VALUES (?)`;
         }else{
             sql = `INSERT INTO employee (first_name) VALUES (?)`;
-            addQuery(sql,a.nametoAdd);
         }
+        addQuery(sql,a.nametoAdd);
     })
     .catch((err)=>console.error(err.message))
 }
