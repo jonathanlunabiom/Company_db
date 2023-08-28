@@ -10,8 +10,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 
-
-
+//view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 function mainMenu(){
     inquirer.prompt(
         [
@@ -21,37 +20,35 @@ function mainMenu(){
                 message:'What would you like to do?',
                 choices: 
                 [
-                'View Employees','Add Employee','Edit Employee','View Roles',
-                'Add Role','View Departments','Add Department','Quit'
+                'view all departments','view all roles','view all employees','add a department',
+                'add a role','add an employee','update an employee role','Quit'
                 ],
                 default: 'View Employees'
             },
         ]
     )
     .then((a)=>{
-        console.log(a.toDo)
-        let selected;
+        const state = a.toDo.split(' ')[2];
         switch(a.toDo){
-            case 'View Employees':
+            case 'view all employees':
                 view('employee');
                 break;
-            case 'Add Employee':
-                addEmp();
-                break;
-            case 'Edit Employee':
-                addDep();
-                break;
-            case 'View Roles':
+            case 'view all roles':
                 view('roles');
                 break;
-            case 'Add Role':
-                addRole();
-                break;
-            case 'View Departments':
+            case 'view all departments':
                 view('department');
                 break;
-            case 'Add Department':
-                addDep();
+            case 'add a department':
+                add(state);
+                break;
+            case 'add a role':
+                add(state);
+                break;
+            case 'add an employee':
+                add(state);
+                break;
+            case 'update an employee role':
                 break;
             case 'Quit':
                 process.exit(0);
@@ -65,15 +62,16 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: '1212',
+        password: '2002',
         database: 'company_db'
     },
 );
 
 function view(data){
-    console.log(data)
-    db.query(`SELECT * FROM ? ;`, data ,(err, rows) => {
-      if (err) {
+    const querie = `SELECT * FROM ${data}`;
+    db.query(querie,(err, rows) => {
+        
+    if (err) {
         console.error(`Error`);
          return;
     }
@@ -82,25 +80,39 @@ function view(data){
     });
 }
 
+function addQuery(sql,nametoAdd){
+    db.query(sql, nametoAdd ,(err) => {
+        if (err) {
+          console.error(`Error`);
+           return;
+        }
+        console.info('Added successfully');
+      mainMenu();
+    });
+}
 
-function addDep(){
+function add(data){
     inquirer.prompt([
         {
             type: 'input',
             name: 'nametoAdd',
-            message: 'Enter a name',
+            message: `Enter the name of the ${data}`,
         },
     ])
     .then((a)=>{
-        const sql = `INSERT INTO department (name) VALUES (?)`;
-        db.query(sql, a.nametoAdd ,(err, rows) => {
-            if (err) {
-              console.error(`Error`);
-               return;
-            }
-          mainMenu();
-          });
+        let sql;
+        if(data === 'department'){
+            sql = `INSERT INTO department (name) VALUES (?)`;
+            addQuery(sql,a.nametoAdd);
+        }else if(data === 'role'){
+            sql = `INSERT INTO roles (title) VALUES (?)`;
+            addQuery(sql,a.nametoAdd);
+        }else{
+            sql = `INSERT INTO employee (first_name) VALUES (?)`;
+            addQuery(sql,a.nametoAdd);
+        }
     })
-
+    .catch((err)=>console.error(err.message))
 }
+
 mainMenu();

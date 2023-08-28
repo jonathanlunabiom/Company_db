@@ -1,7 +1,7 @@
 INSERT INTO department(name)
-VALUES      ('Juan'),
-            ('Barroco'),
-            ('Carlos');
+VALUES      ('Mid'),
+            ('Major'),
+            ('Over');
 
 INSERT INTO roles (title,salary,department_id)
 VALUES      ('Service',2500,1),
