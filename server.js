@@ -1,6 +1,10 @@
 const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
+const uuid = require('./uuid');
+
+const some = uuid();
+console.log(some)
 
 
 const PORT = process.env.PORT || 3001;
@@ -43,7 +47,7 @@ function mainMenu(){
                 add(state);
                 break;
             case 'add a role':
-                add(state);
+                addRole();
                 break;
             case 'add an employee':
                 add(state);
@@ -80,38 +84,70 @@ function view(data){
     });
 }
 
-function addQuery(sql,nametoAdd){
-    db.query(sql, nametoAdd ,(err) => {
-        if (err) {
-          console.error(`Error`);
-           return;
-        }
-        console.info('Added successfully');
-      mainMenu();
-    });
-}
 
-function add(data){
+function addRole(){
     inquirer.prompt([
         {
             type: 'input',
-            name: 'nametoAdd',
-            message: `Enter the name of the ${data}`,
+            name: 'title',
+            message: 'set role',
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'set salary',
+        },
+        {
+            type: 'input',
+            name: 'department',
+            message: 'set department id',
         },
     ])
     .then((a)=>{
-        console.log(a.nametoAdd)
-        let sql;
-        if(data === 'department'){
-            sql = `INSERT INTO department (name) VALUES (?)`;
-        }else if(data === 'role'){
-            sql = `INSERT INTO roles (title) VALUES (?)`;
-        }else{
-            sql = `INSERT INTO employee (first_name) VALUES (?)`;
-        }
-        addQuery(sql,a.nametoAdd);
+        const salary = parseFloat(a.salary);
+        const dep = parseInt(a.department)
+        console.log()
+        db.query(`INSERT INTO roles (title,salary,department_id) VALUES (?,?,?)`,a.title,salary,dep,err=> 
+        err ? console.error(err.message):console.info('Success'))
     })
-    .catch((err)=>console.error(err.message))
+    .catch(err=>console.error(err.message))
 }
+
+
+
+
+// function addQuery(sql,nametoAdd){
+//     db.query(sql, nametoAdd ,(err) => {
+//         if (err) {
+//           console.error(err);
+//            return;
+//         }
+//         console.info('Added successfully');
+//       mainMenu();
+//     });
+// }
+
+// function add(data){
+//     inquirer.prompt([
+//         {
+//             type: 'input',
+//             name: 'nametoAdd',
+//             message: `Enter the name of the ${data}`,
+//         },
+//     ])
+//     .then((a)=>{
+//         let sql;
+//         if(data === 'department'){
+//             sql = `INSERT INTO department (name) VALUES (?)`;
+//         }else if(data === 'role'){
+//             sql = `INSERT INTO roles (title) VALUES (?)`;
+//         }else{
+//             sql = `INSERT INTO employee (first_name) VALUES (?)`;
+//         }
+//         addQuery(sql,a.nametoAdd);
+//     })
+//     .catch((err)=>console.error(err.message))
+// }
+
 
 mainMenu();
