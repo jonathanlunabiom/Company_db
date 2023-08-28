@@ -105,7 +105,7 @@ function add(data){
         if(data === 'department'){
             sql = `INSERT INTO department (name) VALUES (?)`;
         }else if(data === 'role'){
-            sql = `INSERT INTO roles (department_id) VALUES (?)`;
+            sql = `INSERT INTO roles (title) VALUES (?)`;
         }else{
             sql = `INSERT INTO employee (first_name) VALUES (?)`;
         }
