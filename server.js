@@ -54,7 +54,7 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: '1212',
         database: 'company_db'
     },
 );
