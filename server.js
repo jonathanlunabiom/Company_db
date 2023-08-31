@@ -19,7 +19,6 @@ function mainMenu(){
         ]
     )
     .then((a)=>{
-        // const state = a.toDo.split(' ')[2];
         switch(a.toDo){
             case 'view all employees':
                 view('employee');
@@ -62,15 +61,14 @@ const db = mysql.createConnection(
 function view(data){
     const querie = `SELECT * FROM ${data}`;
     db.query(querie,(err, rows) => {
-        
-    if (err) {
-        console.error(`Error`);
-         return;
-    }
-    console.table(rows)
-    mainMenu();
+        if (err) {
+            console.error(`Error`);
+            return;
+        }
+        console.table(rows)
+        mainMenu();
     });
-}
+};
 
 
 function addRole(){
@@ -78,17 +76,17 @@ function addRole(){
         {
             type: 'input',
             name: 'title',
-            message: 'set role',
+            message: 'Set role name',
         },
         {
             type: 'input',
             name: 'salary',
-            message: 'set salary',
+            message: 'Set salary for that role',
         },
         {
             type: 'input',
             name: 'department',
-            message: 'set department id',
+            message: 'Set department id',
         },
     ])
     .then((a)=>{
@@ -96,8 +94,11 @@ function addRole(){
         const query = `INSERT INTO roles (title,salary,department_id) VALUES (?,?,?)`
         toAdd(query,values);
     })
-    .catch(err=>console.error(err.message))
-}
+    .catch(err=>{
+        console.error(err.message);
+        mainMenu();
+    })
+};
 
 function addDep(){
     inquirer.prompt({
@@ -110,7 +111,7 @@ function addDep(){
         toAdd(query,a.department)
     })
     .catch(err=>console.error(err.message));
-}
+};
 
 function addEmp(){
     inquirer.prompt([
@@ -141,7 +142,7 @@ function addEmp(){
         toAdd(query,values);
     })
     .catch(err=>console.error(err.message));
-}
+};
 
 
 function toAdd(statement,values){
@@ -153,7 +154,7 @@ function toAdd(statement,values){
         console.info('Success')
         mainMenu();
     })
-}
+};
 
 function updateInfo(){
     inquirer.prompt([
@@ -172,6 +173,7 @@ function updateInfo(){
         db.query(`UPDATE employee SET role_id = ? WHERE id = ?`,[a.newRole,a.empID])
         mainMenu();
     })
-}
+    .catch(err=>console.error(err.message));
+};
 
 mainMenu();
